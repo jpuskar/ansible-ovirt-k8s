@@ -1,0 +1,13 @@
+---
+- name: make mount folders
+  shell: mkdir -p /mnt/san1_data0
+  args:
+    creates: /mnt/san1_data0
+- name: nfs mounts
+  mount:
+    name: /mnt/san1_data0
+    src: san1:/exports/data0
+    fstype: nfs
+    opts: defaults
+    state: mounted
+    fstab: /etc/fake_fstab

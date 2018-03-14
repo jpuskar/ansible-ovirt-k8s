@@ -1,0 +1,24 @@
+---
+- name: install nfs-server
+  pacman:
+    name: nfs-utils
+- name: enable nfs-server
+  systemd:
+    name: nfs-server
+    enabled: yes
+- name: configure firewall for nfs
+  firewalld:
+    service: nfs
+    permanent: true
+    state: enabled
+- name: add exports
+  lineinfile:
+    dest: /etc/exports
+    regexp: ''
+    insertafter: EOF
+    line: '/exports/data0/ 192.168.1.71(rw,sync) 192.168.1.72(rw,sync)'
+  register: add_exports
+- name: reload exports
+  shell: exportfs -rv
+  when: add_exports.changed
+

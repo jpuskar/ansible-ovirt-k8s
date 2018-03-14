@@ -2,4 +2,4 @@
 - name: configure san
   hosts: san
   roles:
-    - role: nfs
+    - role: san_nfs_server

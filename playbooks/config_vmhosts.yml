@@ -2,4 +2,5 @@
 - name: configure vmhosts
   hosts: vmhosts
   roles:
-    - role: common
+#    - role: common
+    - role: vmhosts
