@@ -1,0 +1,9 @@
+---
+- name: install epel
+  yum:
+    name: epel-release
+- name: install ovirt 4.2 repos
+  yum:
+    name: http://resources.ovirt.org/pub/yum-repo/ovirt-release42.rpm
+- name: install ovirt 4.2 hosted enigne setup
+    name: ovirt-hosted-engine-setup

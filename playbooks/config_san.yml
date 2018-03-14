@@ -1,0 +1,5 @@
+---
+- name: configure san
+  hosts: san
+  roles:
+    - role: nfs

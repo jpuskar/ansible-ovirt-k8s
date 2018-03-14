@@ -1,0 +1,8 @@
+---
+- name: install nfs-server
+  pacman:
+    name: nfs-utils
+- name: enable nfs-server
+  systemd:
+    name: nfs-server
+    enabled: yes
