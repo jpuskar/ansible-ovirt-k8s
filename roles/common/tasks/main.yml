@@ -1,3 +1,8 @@
 ---
 #include: storage.yml
-include: update.yml
+#include: update.yml
+- name: Set up authorized keys
+  authorized_key:
+    user: "{{ authorized_key_user }}"
+    state: present
+    key: "{{ authorized_key }}"
