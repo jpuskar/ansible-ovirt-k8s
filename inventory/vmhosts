@@ -1,3 +1,6 @@
-[vmhosts]
+[ovirt_hosted_engine]
 vmhost1
-# vmhost2
+
+[ovirt_hosts]
+vmhost1
+vmhost2

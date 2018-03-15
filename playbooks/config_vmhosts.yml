@@ -1,6 +1,12 @@
 ---
 - name: configure vmhosts
-  hosts: vmhosts
+  hosts: ovirt_hosts
   roles:
     - role: common
-    - role: vmhosts
+    - role: ovirt_host
+
+- name: configure hosted engine
+  hosts: ovirt_hosted_engine
+  roles:
+    - role: common
+    - role: ovirt_hosted_engine

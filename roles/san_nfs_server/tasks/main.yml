@@ -11,14 +11,39 @@
     service: nfs
     permanent: true
     state: enabled
-- name: add exports
+- name: add export directory
+  file:
+    state: directory
+    path: /exports
+    owner: 36
+    group: 36
+- name: add data0 export directory
+  file:
+    state: directory
+    path: /exports/data0
+    owner: 36
+    group: 36
+- name: add data0 export
   lineinfile:
     dest: /etc/exports
-    regexp: ''
     insertafter: EOF
-    line: '/exports/data0/ 192.168.1.71(rw,sync) 192.168.1.72(rw,sync)'
-  register: add_exports
+    line: '/exports/data0/ 192.168.1.71(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36) 192.168.1.72(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36)'
+  register: add_data0_export
+- name: add iso export directory
+  file:
+    state: directory
+    path: /exports/iso
+    owner: 36
+    group: 36
+- name: add iso export
+  lineinfile:
+    dest: /etc/exports
+    insertafter: EOF
+    line: '/exports/iso/ 192.168.1.71(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36) 192.168.1.72(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36)'
+  register: add_iso_export
 - name: reload exports
   shell: exportfs -rv
-  when: add_exports.changed
+  when: (add_data0_export.changed or add_iso_export.changed)
 
+# chown 36:36 /exports/data0
+# install iotop
