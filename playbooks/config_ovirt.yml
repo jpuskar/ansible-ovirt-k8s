@@ -1,0 +1,6 @@
+---
+- name: configure ovirt
+  hosts: ovirt
+  roles:
+#    - role: common
+    - role: ovirt_engine

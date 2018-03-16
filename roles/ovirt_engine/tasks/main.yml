@@ -1,0 +1,14 @@
+---
+- ovirt_storage_domains:
+    name: iso
+    auth:
+      username: "{{ ovirt_admin_username }}"
+      password: "{{ ovirt_admin_password }}"
+      url: "{{ ovirt_url }}"
+      insecure: true
+    host: "vmhost1.jrp11699.ddns.net"
+    data_center: Default
+    domain_function: iso
+    nfs:
+      address: "{{ ovirt_nfs_address }}"
+      path: "{{ ovirt_nfs_path }}"

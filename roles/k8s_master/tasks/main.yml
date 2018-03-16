@@ -1,0 +1,92 @@
+---
+- name: install deps
+  yum:
+    name: "{{ item }}"
+  with_items:
+    - etcd
+    - kubernetes
+
+- name: configure ETCD_NAME
+  lineinfile:
+    dest: /etc/etcd/etcd.conf
+    regexp: "^ETCD_NAME"
+    line: "ETCD_NAME=default"
+  notify: restart_k8s
+- name: configure ETCD_DATA_DIR
+  lineinfile:
+    dest: /etc/etcd/etcd.conf
+    regexp: "^ETCD_DATA_DIR"
+    line: "ETCD_DATA_DIR=\"/var/lib/etcd/default.etcd\""
+  notify: restart_k8s
+- name: configure ETCD_LISTEN_CLIENT_URLS
+  lineinfile:
+    dest: /etc/etcd/etcd.conf
+    regexp: "^ETCD_LISTEN_CLIENT_URLS"
+    line: "ETCD_LISTEN_CLIENT_URLS=\"http://0.0.0.0:2379\""
+  notify: restart_k8s
+- name: configure ETCD_ADVERTISE_CLIENT_URLS
+  lineinfile:
+    dest: /etc/etcd/etcd.conf
+    regexp: "^ETCD_ADVERTISE_CLIENT_URLS"
+    line: "ETCD_ADVERTISE_CLIENT_URLS=\"http://localhost:2379\""
+  notify: restart_k8s
+
+- name: configure KUBE_API_ADDRESS
+  lineinfile:
+    dest: /etc/kubernetes/apiserver
+    regexp: "^KUBE_API_ADDRESS"
+    line: "KUBE_API_ADDRESS=\"--address=0.0.0.0\""
+  notify: restart_k8s
+
+- name: configure KUBE_API_PORT
+  lineinfile:
+    dest: /etc/kubernetes/apiserver
+    regexp: "^KUBE_API_PORT"
+    line: "KUBE_API_PORT=\"--port=8080\""
+  notify: restart_k8s
+
+- name: configure KUBELET_PORT
+  lineinfile:
+    dest: /etc/kubernetes/apiserver
+    regexp: "^KUBELET_PORT"
+    line: "KUBELET_PORT=\"--kubelet_port=10250\""
+  notify: restart_k8s
+
+- name: configure KUBE_ETCD_SERVERS
+  lineinfile:
+    dest: /etc/kubernetes/apiserver
+    regexp: "^KUBE_ETCD_SERVERS"
+    line: "KUBE_ETCD_SERVERS=\"--etcd_servers=http://127.0.0.1:2379\""
+  notify: restart_k8s
+
+- name: configure KUBE_SERVICE_ADDRESSES
+  lineinfile:
+    dest: /etc/kubernetes/apiserver
+    regexp: "^KUBE_SERVICE_ADDRESSES"
+    line: "KUBE_SERVICE_ADDRESSES=\"--service-cluster-ip-range=10.254.0.0/16\""
+  notify: restart_k8s
+
+- name: configure KUBE_ADMISSION_CONTROL
+  lineinfile:
+    dest: /etc/kubernetes/apiserver
+    regexp: "^KUBE_ADMISSION_CONTROL"
+    line: "KUBE_ADMISSION_CONTROL=\"--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ResourceQuota\""
+  notify: restart_k8s
+
+- name: configure KUBE_API_ARGS
+  lineinfile:
+    dest: /etc/kubernetes/apiserver
+    regexp: "^KUBE_API_ARGS"
+    line: "KUBE_API_ARGS=\"\""
+  notify: restart_k8s
+
+- name: restart and enable services
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - etcd
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler

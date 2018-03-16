@@ -39,7 +39,8 @@
   lineinfile:
     dest: /etc/exports
     insertafter: EOF
-    line: '/exports/iso/ 192.168.1.71(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36) 192.168.1.72(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36)'
+    regexp: '^\/exports\/iso'
+    line: '/exports/iso/ 192.168.1.71(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36) 192.168.1.72(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36) 192.168.1.55(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36)'
   register: add_iso_export
 - name: reload exports
   shell: exportfs -rv

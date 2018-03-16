@@ -1,0 +1,135 @@
+---
+- name: install apt-transport-https
+  apt:
+    name: apt-transport-https
+
+- name: install kube apt repo
+  apt_repository:
+    repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+
+- name: add kube apt repo key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: add kube docker-ce repo key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+
+- name: install docker-ce repo
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu zesty stable
+    state: present
+
+- name: apt update
+  apt:
+    dpkg_options: "-o Acquire::ForceIPv4=true"
+    update_cache: yes
+
+- name: install deps
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - apt-transport-https
+    - docker-ce
+    - ca-certificates
+    - curl
+    - software-properties-common
+    - flannel
+    - kubelet
+
+- name: add flannel systemd unit file
+  template:
+    src: templates/flanneld.service.j2
+    dest: /lib/systemd/system/flanneld.service
+    owner: root
+    group: root
+  register: add_flannel_systemd
+
+- name: create flannel config file
+  copy:
+    content: ""
+    dest: /etc/default/flanneld
+    force: no
+    group: root
+    owner: root
+
+- name: configure FLANNEL_ETCD
+  lineinfile:
+    dest: /etc/default/flanneld
+    regexp: "^FLANNEL_ETCD"
+    line: "FLANNEL_ETCD=\"http://192.168.1.44:2379\""
+
+- name: configure FLANNEL_ETCD_KEY
+  lineinfile:
+    dest: /etc/default/flanneld
+    regexp: "^FLANNEL_ETCD_KEY"
+    line: "FLANNEL_ETCD_KEY=\"/atomic.io/network\""
+
+- name: systemctl daemon-reload
+  shell: systemctl daemon-reload
+  when: add_flannel_systemd.changed
+
+- name: create kubernetes config file
+  copy:
+    content: ""
+    dest: /etc/kubernetes/config
+    force: no
+    group: root
+    owner: root
+
+- name: configure KUBE_MASTER
+  lineinfile:
+    dest: /etc/kubernetes/config
+    regexp: "^KUBE_MASTER"
+    line: "KUBE_MASTER=\"--master=http://192.168.1.44:8080\""
+
+- name: create kubernetes kubelet config file
+  copy:
+    content: ""
+    dest: /etc/kubernetes/kubelet
+    force: no
+    group: root
+    owner: root
+
+- name: configure KUBELET_ADDRESS
+  lineinfile:
+    dest: /etc/kubernetes/kubelet
+    regexp: "^KUBELET_ADDRESS"
+    line: "KUBELET_ADDRESS=\"--address=0.0.0.0\""
+
+- name: configure KUBELET_PORT
+  lineinfile:
+    dest: /etc/kubernetes/kubelet
+    regexp: "^KUBELET_PORT"
+    line: "KUBELET_PORT=\"--port=10250\""
+
+
+- name: configure KUBELET_HOSTNAME
+  lineinfile:
+    dest: /etc/kubernetes/kubelet
+    regexp: "^KUBELET_HOSTNAME"
+    line: "KUBELET_HOSTNAME=\"--hostname_override={{ ansible_default_ipv4.address }}\""
+
+- name: configure KUBELET_API_SERVER
+  lineinfile:
+    dest: /etc/kubernetes/kubelet
+    regexp: "^KUBELET_API_SERVER"
+    line: "KUBELET_API_SERVER=\"--api_servers=http://192.168.1.44:8080\""
+
+- name: configure KUBELET_ARGS
+  lineinfile:
+    dest: /etc/kubernetes/kubelet
+    regexp: "^KUBELET_ARGS"
+    line: "KUBELET_ARGS=\"\""
+
+- name: restart and enable services
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - kube-proxy
+    - kubelet
+    - docker
+    - flanneld

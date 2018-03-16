@@ -1,0 +1,5 @@
+[k8s_master]
+k8s-master1
+
+[k8s_minions]
+kube1

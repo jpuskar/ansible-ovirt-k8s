@@ -1,0 +1,5 @@
+---
+- name: restart_k8s
+  systemd:
+    name: kube-apiserver
+    state: restarted

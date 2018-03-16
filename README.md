@@ -3,6 +3,14 @@ Role Name
 
 A brief description of the role goes here.
 
+
+References
+----------
+
+https://severalnines.com/blog/installing-kubernetes-cluster-minions-centos7-manage-pods-services
+https://xelatex.github.io/2015/10/10/Flannel-for-Docker-Overlay-Network/
+http://cloudgeekz.com/1016/configure-flannel-docker-power.html
+
 Requirements
 ------------
 

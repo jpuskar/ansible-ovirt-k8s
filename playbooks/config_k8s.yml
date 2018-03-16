@@ -1,0 +1,14 @@
+---
+#- name: configure k8s_master
+#  hosts: k8s_master
+#  roles:
+#    - role: common
+#    - role: ntp_client
+#    - role: k8s_master
+
+- name: configure k8s_minions
+  hosts: k8s_minions
+  roles:
+#    - role: common
+#    - role: ntp_client
+    - role: k8s_minion
