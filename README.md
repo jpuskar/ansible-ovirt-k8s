@@ -11,6 +11,11 @@ https://severalnines.com/blog/installing-kubernetes-cluster-minions-centos7-mana
 https://xelatex.github.io/2015/10/10/Flannel-for-Docker-Overlay-Network/
 http://cloudgeekz.com/1016/configure-flannel-docker-power.html
 
+
+**
+https://icicimov.github.io/blog/kubernetes/Kubernetes-cluster-step-by-step/
+**
+
 Requirements
 ------------
 
